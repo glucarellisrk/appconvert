@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const ConvertidorMoneda = () => {
     const [cantidad, setCantidad] = useState(0);
     const [cantidadConvertida, setCantidadConvertida] = useState(0);
-    const [monedaOrigen, setMonedaOrigen] = useState('BRL'); // 'BRL' o 'USD'
+    const [monedaOrigen, setMonedaOrigen] = useState('USD');
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState(null);
 
@@ -19,17 +19,22 @@ const ConvertidorMoneda = () => {
         setCargando(true);
         setError(null);
         try {
-            // Llama a una API de tasas de cambio
-            const response = await fetch('https://api.exchangerate-api.com/v4/latest/ARS');
-            if (!response.ok) throw new Error('Error al obtener las tasas de cambio');
-            const data = await response.json();
+            let tasaUSD = 1;
+            if (monedaOrigen === 'BRL') {
+                const responseBRL = await fetch(`https://api.exchangerate-api.com/v4/latest/BRL`);
+                if (!responseBRL.ok) throw new Error('Error al obtener la tasa de cambio BRL a USD');
+                const dataBRL = await responseBRL.json();
+                tasaUSD = dataBRL.rates['USD']; // Tasa de BRL a USD
+            }
 
-            // Obtiene la tasa según la moneda seleccionada
-            const tasa = data.rates[monedaOrigen]; // Tasa de ARS -> BRL o USD
-            if (!tasa) throw new Error('Moneda no soportada');
+            const responseBlue = await fetch(`https://api.bluelytics.com.ar/v2/latest`);
+            if (!responseBlue.ok) throw new Error('Error al obtener la tasa del dólar blue');
+            const dataBlue = await responseBlue.json();
+            const tasaBlue = dataBlue.blue.value_sell; // Tasa de venta del dólar blue
 
-            // Convierte de BRL/USD a ARS
-            setCantidadConvertida((cantidad / tasa).toFixed(2)); // Divide porque el API da tasas inversas
+            if (!tasaUSD || !tasaBlue) throw new Error('Moneda no soportada');
+            const cantidadEnUSD = cantidad * tasaUSD;
+            setCantidadConvertida((cantidadEnUSD * tasaBlue).toFixed(2));
         } catch (error) {
             setError(error.message);
         } finally {
@@ -53,8 +58,8 @@ const ConvertidorMoneda = () => {
                 <label>
                     Moneda Origen:
                     <select value={monedaOrigen} onChange={manejarCambioMonedaOrigen}>
-                        <option value="BRL">Reales (BRL)</option>
                         <option value="USD">Dólares (USD)</option>
+                        <option value="BRL">Reales (BRL)</option>
                     </select>
                 </label>
                 <button onClick={convertirMoneda} disabled={cargando}>
