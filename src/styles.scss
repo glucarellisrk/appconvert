@@ -1,8 +1,9 @@
 // Variables
 $primary-color: #3498db;
 $secondary-color: #2ecc71;
-$font-family: 'Arial, sans-serif';
+$font-family: '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', sans-serif;
 $background-light: #f5f5f5;
+$error-color: #e74c3c;
 
 // Global styles
 body {
@@ -12,86 +13,264 @@ body {
   background-color: $background-light;
   display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  align-items: flex-start; /* Alinea el contenido hacia arriba */
+  height: 100vh;
+  text-align: center;
+  box-sizing: border-box;
+  font-size: 18px;
+  line-height: 1.6;
+  overflow: hidden; /* Evita scroll en dispositivos grandes */
 }
 
-// Contenedor del convertidor
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding-bottom: 60px; /* Deja espacio para la barra */
+}
+
+
 .currency-converter {
+  flex: 1; /* Asegura que ocupe todo el espacio disponible */
+  padding: 30px;
   background-color: white;
   color: black;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
 
   h2 {
     margin-top: 0;
     color: $primary-color;
-    text-align: center;
+    font-size: 24px;
+    text-align: center; /* Asegura que el título se vea bien */
   }
 
   label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-weight: bold;
     color: #333;
+    text-align: left;
+    font-size: 20px;
   }
 
-  input,
+  .input-group {
+    position: relative;
+
+    .form-control {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 18px;
+      background-size: 24px;
+      box-sizing: border-box;
+    }
+  }
+
   select {
     width: 100%;
-    padding: 10px;
+    padding: 15px;
     margin-bottom: 20px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
+    border-radius: 10px;
+    font-size: 18px;
   }
 
   button {
     width: 100%;
-    padding: 10px;
-    background-color: $secondary-color;
+    padding: 15px;
+    background-color: #007aff; // Azul tipo Apple
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px; // Bordes redondeados
     cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 
     &:hover {
-      background-color: darken($secondary-color, 10%);
+      background-color: darken(#007aff, 10%);
+      transform: translateY(-2px); // Efecto de "levantamiento"
+    }
+
+    &:active {
+      background-color: darken(#007aff, 20%);
     }
   }
 
   h3 {
-    margin-top: 20px;
+    margin-top: 8px;
+    font-size: 20px;
+    color: $primary-color;
+  }
+
+  .result-box {
+    background-color: $secondary-color;
+    color: white;
+    padding: 1em;
+    border-radius: 10px;
     text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  h4 {
+    margin-top: 2px;
     font-size: 18px;
-    color: $secondary-color;
+    color: $primary-color;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: 600; // Fuente más gruesa
+    }
   }
 }
 
 // Responsividad para dispositivos móviles
 @media (max-width: 600px) {
+  body {
+    overflow: hidden; /* Permite desplazamiento en dispositivos móviles */
+  }
+
   .currency-converter {
-    padding: 15px;
+    padding: 21px 17px 0px 10px;
+    max-height: 100vh; /* Ajusta el tamaño máximo para permitir scroll si es necesario */
+    width: 96%; /* Asegura que el contenedor ocupe el 100% del ancho en dispositivos pequeños */
 
     h2 {
-      font-size: 20px;
+      font-size: 22px; /* Ajusta el tamaño del título en móviles */
     }
 
     label {
-      font-size: 14px;
+      font-size: 27px;
     }
 
     button {
-      font-size: 14px;
+      font-size: 16px;
     }
 
     h3 {
-      font-size: 16px;
+      font-size: 18px;
     }
   }
+
+  .result-box {
+    font-size: 36px;  // Aumenta el tamaño de la fuente en móviles
+    font-weight: bold; // Mantén la negrita
+    padding: 30px;  // Más padding para hacerlo más legible
+  }
+}
+
+// Para pantallas grandes (más de 600px)
+@media (min-width: 601px) {
+  .currency-converter {
+    padding: 30px; /* Mantén el padding original */
+  }
+}
+
+.convert-btn {
+  background-color: #4CAF50; /* Verde */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  border-radius: 5px;
+}
+
+.convert-btn:hover {
+  background-color: #45a049;
+}
+
+.convert-btn.loading {
+  background-color: #f39c12; /* Naranja */
+  cursor: wait;
+  animation: pulsar 1.5s infinite; /* Efecto de pulsación */
+}
+
+@keyframes pulsar {
+  0% {
+      transform: scale(1);
+  }
+  50% {
+      transform: scale(1.1);
+  }
+  100% {
+      transform: scale(1);
+  }
+}
+
+.result-box {
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.input-group {
+  margin-bottom: -23px;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-size: 1.5em; 
+}
+
+.popup-content button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup-content button:hover {
+  background-color: #45a049;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3; 
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
